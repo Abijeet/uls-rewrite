@@ -5,6 +5,7 @@
             v-model:input-chips="selectedLanguageChips"
             :menu-items="languages"
             :placeholder="placeholder"
+            :menu-config="menuConfig"
         />
 	</div>
 </template>
@@ -12,6 +13,7 @@
 <script>
 import { ref } from 'vue';
 import { CdxMultiselectLookup } from '@wikimedia/codex';
+import { getLanguageOptions } from '../repositories/Languages';
 
 export default {
     name: 'MultipleLanguageSelector',
@@ -23,20 +25,18 @@ export default {
         }
     },
     setup(props) {
-        const languages = [
-            { label: 'English', value: 'en' },
-            { label: 'Spanish', value: 'es' },
-            { label: 'French', value: 'fr' },
-            { label: 'German', value: 'de' },
-            { label: 'Chinese', value: 'zh' }
-        ];
+        const languages = ref( getLanguageOptions() );
 
         const selectedLanguages = ref([]);
         const selectedLanguageChips = ref([]);
+        const menuConfig = {
+            visibleItemLimit: 8
+        };
 
         return {
             placeholder: props.placeholder,
             languages,
+            menuConfig,
             selectedLanguages,
             selectedLanguageChips
         };

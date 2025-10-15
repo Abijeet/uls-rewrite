@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@wikimedia/codex": "^2.3.0",
-    "@wikimedia/language-data": "^1.1.9",
+    "@wikimedia/language-data": "file:../data/wikimedia-language-data-1.1.9.tgz",
     "vue": "^3.5.22"
   },
   "devDependencies": {
