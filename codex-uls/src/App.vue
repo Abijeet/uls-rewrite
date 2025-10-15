@@ -7,12 +7,12 @@
 	<hr>
 	<div class="language-selector-wrapper">
 		<label>Select a language:</label>
-		<language-selector :is-multiselect="false" />
+		<language-selector placeholder="Select a language" />
 	</div>
 	<div class="language-selector-wrapper">
 		<div >
 		<label>Select multiple languages:</label>
-		<language-selector :is-multiselect="true" />
+		<multiple-language-selector placeholder="Select languages" />
 	</div>
 	</div>
 </template>
@@ -21,13 +21,15 @@
 import { defineComponent } from 'vue';
 import { CdxButton, CdxIcon } from '@wikimedia/codex';
 import { cdxIconTrash } from '@wikimedia/codex-icons';
-import LanguageSelector from './components/LanguageSelector/LanguageSelector.vue';
+import LanguageSelector from './components/LanguageSelector.vue';
+import MultipleLanguageSelector from './components/MultipleLanguageSelector.vue';
 
 export default defineComponent( {
 	components: {
 		CdxButton,
 		CdxIcon,
-		LanguageSelector
+		LanguageSelector,
+		MultipleLanguageSelector
 	},
     setup() {
         return {

@@ -1,31 +1,25 @@
 <template>
 	<div>
-		<cdx-lookup
-            v-if="!isMultiselect"
-            v-model:selected="selectedLanguage"
-            :menu-items="languages"
-            placeholder="Select a language"
-        />
         <cdx-multiselect-lookup
-            v-else
             v-model:selected="selectedLanguages"
             v-model:input-chips="selectedLanguageChips"
             :menu-items="languages"
-            placeholder="Select languages"
+            :placeholder="placeholder"
         />
 	</div>
 </template>
 
 <script>
 import { ref } from 'vue';
-import { CdxLookup, CdxMultiselectLookup } from '@wikimedia/codex';
+import { CdxMultiselectLookup } from '@wikimedia/codex';
 
 export default {
-    components: { CdxLookup, CdxMultiselectLookup },
+    name: 'MultipleLanguageSelector',
+    components: { CdxMultiselectLookup },
     props: {
-        isMultiselect: {
-            type: Boolean,
-            default: false
+        placeholder: {
+            type: String,
+            required: true,
         }
     },
     setup(props) {
@@ -37,14 +31,12 @@ export default {
             { label: 'Chinese', value: 'zh' }
         ];
 
-        const selectedLanguage = ref(null);
         const selectedLanguages = ref([]);
         const selectedLanguageChips = ref([]);
 
         return {
+            placeholder: props.placeholder,
             languages,
-            isMultiselect: props.isMultiselect,
-            selectedLanguage,
             selectedLanguages,
             selectedLanguageChips
         };
