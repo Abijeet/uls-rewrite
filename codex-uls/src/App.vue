@@ -1,9 +1,4 @@
 <template>
-	<div>
-		<cdx-button action="destructive">
-			<cdx-icon :icon="cdxIconTrash" /> Delete this item
-		</cdx-button>
-	</div>
 	<hr>
 	<div class="language-selector-wrapper">
 		<label>Select a language:</label>
@@ -19,22 +14,15 @@
 
 <script>
 import { defineComponent } from 'vue';
-import { CdxButton, CdxIcon } from '@wikimedia/codex';
-import { cdxIconTrash } from '@wikimedia/codex-icons';
 import LanguageSelector from './components/LanguageSelector.vue';
 import MultipleLanguageSelector from './components/MultipleLanguageSelector.vue';
 
 export default defineComponent( {
 	components: {
-		CdxButton,
-		CdxIcon,
 		LanguageSelector,
 		MultipleLanguageSelector
 	},
     setup() {
-        return {
-            cdxIconTrash
-        }
     }
 } );
 </script>
