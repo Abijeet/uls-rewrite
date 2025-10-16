@@ -1,5 +1,17 @@
 <template>
 	<hr>
+	<h2>Single language selector</h2>
+	<p>
+		A language selector built using the Lookup component from Codex. It supports the following features:
+	</p>
+	<ul>
+		<li>Search and filter languages</li>
+		<li>Highlight specific languages with an icon</li>
+		<li>Custom no results slot to show suggestions when no results are found</li>
+		<li>Loads languages from <a href="https://github.com/wikimedia/language-data/">language-data</a> library, 
+			and the <a href="https://en.wikipedia.org/w/api.php?action=languagesearch&format=json&formatversion=2&search=ff">LanguageSearch API</a> in ULS
+		</li>
+	</ul>
 	<div class="language-selector-wrapper">
 		<cdx-field>
 			<language-selector 
@@ -31,6 +43,8 @@
 		</cdx-field>
 	</div>
 	<hr>
+	<h2>Multiple language selector</h2>
+	<p>Supports a subset of features supported by the single language selector. You can search and select multiple languages.</p>
 	<div class="language-selector-wrapper">
 		<cdx-field>
 			<multiple-language-selector placeholder="Select languages" />
