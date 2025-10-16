@@ -4,7 +4,7 @@
             v-model:selected="selectedLanguages"
             v-model:input-chips="selectedLanguageChips"
             v-model:input-value="inputValue"
-            :menu-items="languages"
+            :menu-items="menuItems"
             :placeholder="placeholder"
             :menu-config="menuConfig"
             @update:input-value="onUpdateInputValue"
@@ -29,7 +29,7 @@ export default {
     },
     setup(props) {
         const allLanguageOptions = getLanguageAutonyms();
-        const languages = ref( allLanguageOptions );
+        const menuItems = ref( allLanguageOptions );
 
         const selectedLanguages = ref([]);
         const selectedLanguageChips = ref([]);
@@ -41,7 +41,7 @@ export default {
         let debounceTimer;
         const onUpdateInputValue = ( value ) => {
             if ( value === '' ) {
-                languages.value = allLanguageOptions;
+                menuItems.value = allLanguageOptions;
                 return;
             }
 
@@ -52,16 +52,16 @@ export default {
                 }
 
                 try {
-                    languages.value = await searchLanguages( value );
+                    menuItems.value = await searchLanguages( value );
                 } catch ( e ) {
-                    languages.value = [];
+                    menuItems.value = [];
                 }
             }, languageSearchDebounce );
         };
 
         return {
             placeholder: props.placeholder,
-            languages,
+            menuItems,
             menuConfig,
             selectedLanguages,
             selectedLanguageChips,

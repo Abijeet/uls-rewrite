@@ -3,12 +3,16 @@
 		<cdx-lookup
             v-model:selected="selectedLanguage"
             v-model:input-value="inputValue"
-            :menu-items="languages"
+            :menu-items="menuItems"
             :placeholder="placeholder"
             :menu-config="menuConfig"
             @update:input-value="onUpdateInputValue"
-
-        />
+        >
+            <template #no-results>
+                <slot name="no-results" :input-value="inputValue">
+                </slot>
+            </template>
+        </cdx-lookup>
 	</div>
 </template>
 
@@ -29,7 +33,7 @@ export default {
     },
     setup(props) {
         const allLanguageOptions = getLanguageAutonyms();
-        const languages = ref( allLanguageOptions );
+        const menuItems = ref( allLanguageOptions );
         const selectedLanguage = ref(null);
         const inputValue = ref('');
         const menuConfig = {
@@ -39,7 +43,7 @@ export default {
         let debounceTimer;
         const onUpdateInputValue = ( value ) => {
             if ( value === '' ) {
-                languages.value = allLanguageOptions;
+                menuItems.value = allLanguageOptions;
                 return;
             }
 
@@ -50,15 +54,15 @@ export default {
                 }
 
                 try {
-                    languages.value = await searchLanguages( value );
+                    menuItems.value = await searchLanguages( value );
                 } catch ( e ) {
-                    languages.value = [];
+                    menuItems.value = [];
                 }
             }, languageSearchDebounce );
         };
 
         return {
-            languages,
+            menuItems,
             selectedLanguage,
             inputValue,
             onUpdateInputValue,
