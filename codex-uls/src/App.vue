@@ -2,7 +2,10 @@
 	<hr>
 	<div class="language-selector-wrapper">
 		<cdx-field>
-			<language-selector placeholder="Select a language">
+			<language-selector 
+				placeholder="Select a language" 
+				:languages-to-highlight="languagesToHighlight"
+			>
 				<template #no-results="{ inputValue }">
 					<p>The page is not available in the selected language, <strong>{{ inputValue }}</strong></p>
 					<p>It maybe available in other languages:</p>
@@ -39,7 +42,7 @@
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue';
+import { computed, defineComponent, ref } from 'vue';
 import { CdxField, CdxTextInput } from '@wikimedia/codex';
 import LanguageSelector from './components/LanguageSelector.vue';
 import MultipleLanguageSelector from './components/MultipleLanguageSelector.vue';
@@ -53,7 +56,15 @@ export default defineComponent( {
 	},
     setup() {
 		const highlightedLanguages = ref( 'en,hi' );
-		return { highlightedLanguages };
+
+		const languagesToHighlight = computed( () => {
+			return highlightedLanguages.value.split( ',' ).map( lang => lang.trim() );
+		} );
+
+		return { 
+			highlightedLanguages,
+			languagesToHighlight
+		};
     }
 } );
 </script>

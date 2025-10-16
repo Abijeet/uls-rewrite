@@ -12,24 +12,34 @@
                 <slot name="no-results" :input-value="inputValue">
                 </slot>
             </template>
+            <template #menu-item="{ menuItem }">
+                <cdx-icon :icon="cdxIconUnStar" v-if="languagesToHighlight.includes( menuItem.value )"/>
+                {{ menuItem.label }}
+            </template>
         </cdx-lookup>
 	</div>
 </template>
 
 <script>
 import { ref } from 'vue';
-import { CdxLookup } from '@wikimedia/codex';
+import { CdxLookup, CdxIcon } from '@wikimedia/codex';
+import { cdxIconUnStar } from '@wikimedia/codex-icons';
 import { getLanguageAutonyms, searchLanguages } from '../repositories/Languages';
 import { visibleItemLimit, languageSearchDebounce } from '../config/LanguageSelectorMenuConfig';
 
 export default {
     name: 'LanguageSelector',
-    components: { CdxLookup },
+    components: { CdxLookup, CdxIcon },
     props: {
         placeholder: {
             type: String,
             required: true,
-        }
+        },
+        languagesToHighlight: {
+            type: Array,
+            required: false,
+            default: [],
+        },
     },
     setup(props) {
         const allLanguageOptions = getLanguageAutonyms();
@@ -68,6 +78,7 @@ export default {
             onUpdateInputValue,
             menuConfig,
             placeholder: props.placeholder,
+            cdxIconUnStar
         };
     }
 };
