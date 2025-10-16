@@ -13,7 +13,7 @@
                 </slot>
             </template>
             <template #menu-item="{ menuItem }">
-                <cdx-icon :icon="cdxIconUnStar" v-if="languagesToHighlight.includes( menuItem.value )"/>
+                <cdx-icon v-if="languagesToHighlight.includes( menuItem.value )" :icon="cdxIconUnStar"/>
                 {{ menuItem.label }}
             </template>
         </cdx-lookup>
@@ -38,10 +38,10 @@ export default {
         languagesToHighlight: {
             type: Array,
             required: false,
-            default: [],
+            default: () => [],
         },
     },
-    setup(props) {
+    setup() {
         const allLanguageOptions = getLanguageAutonyms();
         const menuItems = ref( allLanguageOptions );
         const selectedLanguage = ref(null);
@@ -65,7 +65,7 @@ export default {
 
                 try {
                     menuItems.value = await searchLanguages( value );
-                } catch ( e ) {
+                } catch {
                     menuItems.value = [];
                 }
             }, languageSearchDebounce );
@@ -77,7 +77,6 @@ export default {
             inputValue,
             onUpdateInputValue,
             menuConfig,
-            placeholder: props.placeholder,
             cdxIconUnStar
         };
     }

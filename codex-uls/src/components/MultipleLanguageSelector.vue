@@ -27,7 +27,7 @@ export default {
             required: true,
         }
     },
-    setup(props) {
+    setup() {
         const allLanguageOptions = getLanguageAutonyms();
         const menuItems = ref( allLanguageOptions );
 
@@ -53,14 +53,13 @@ export default {
 
                 try {
                     menuItems.value = await searchLanguages( value );
-                } catch ( e ) {
+                } catch {
                     menuItems.value = [];
                 }
             }, languageSearchDebounce );
         };
 
         return {
-            placeholder: props.placeholder,
             menuItems,
             menuConfig,
             selectedLanguages,

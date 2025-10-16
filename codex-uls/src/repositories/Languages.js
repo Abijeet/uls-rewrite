@@ -29,7 +29,7 @@ async function searchLanguages(search) {
     }
     
     const data = await res.json();
-    if ( !data.hasOwnProperty('languagesearch') ) {
+    if ( !Object.prototype.hasOwnProperty.call(data, 'languagesearch') ) {
         throw new Error( `language search response missing required properties` );
     }
 
