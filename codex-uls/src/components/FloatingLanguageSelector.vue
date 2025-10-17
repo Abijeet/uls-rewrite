@@ -1,12 +1,21 @@
 <template>
-    <dialog ref="dialogEl" closedby="any">
-        <div class="ls-language-selector-dialog-header">
+    <cdx-button ref="langaugeSelectorButtonRef" @click="isVisible = !isVisible">
+        Choose language...
+    </cdx-button>
+    <div v-if="isVisible" ref="containerEl" class="floating-language-selector" :style="floatingStyles">
+        <div class="ls-language-selector-header">
             <cdx-text-input
                 :start-icon="cdxIconSearch"
                 :model-value="inputValue"
                 placeholder="Search for a language"
                 @update:model-value="onSearch"
                 @keydown="onKeyDown" />
+            <cdx-button
+                weight="quiet"
+                aria-label="Close"
+                @click="onClose">
+                <cdx-icon :icon="cdxIconClose" />
+            </cdx-button>   
         </div>
         <div class="ls-language-list">
             <ul>
@@ -19,33 +28,38 @@
             </ul>
         </div>
         <div class="ls-language-selector-dialog-footer">
-            <cdx-button @click="dialogEl.close()">Close</cdx-button>
+            <cdx-button @click="onClose">Close</cdx-button>
         </div>
-    </dialog>
+    </div>
 </template>
 <script>
-import { onMounted, onUnmounted, ref, watch } from 'vue';
-import { CdxTextInput, CdxButton } from '@wikimedia/codex';
+import { onMounted, ref, watch } from 'vue';
+import { CdxTextInput, CdxButton, CdxIcon } from '@wikimedia/codex';
 import { getLanguageAutonyms, searchLanguages } from '../repositories/Languages';
 import { languageSearchDebounce } from '../config/LanguageSelectorMenuConfig';
-import { cdxIconSearch } from '@wikimedia/codex-icons';
+import { cdxIconSearch, cdxIconClose } from '@wikimedia/codex-icons';
+import { useFloating, autoUpdate } from '@floating-ui/vue';
 
 export default {
     name: 'FloatingLanguageSelector',
     components: {
         CdxTextInput,
-        CdxButton
-    },
+        CdxButton,
+        CdxIcon
+    }, 
     emits: [ 'close' ],
-    setup( props, { emit } ) {
-        const dialogEl = ref( null );
+    setup() {
+        const containerEl = ref( null );
+        const langaugeSelectorButtonRef = ref( null );
         const allLanguageOptions = getLanguageAutonyms();
         const menuItems = ref( allLanguageOptions );
         const inputValue = ref( '' );
         const selectedIndex = ref( -1 );
+        const isVisible = ref( false );
         let debounceTimer;
         let listEl;
 
+        /** Trigger search when text is entered */
         const onSearch = ( newValue ) => {
             inputValue.value = newValue;
             selectedIndex.value = -1;
@@ -64,6 +78,7 @@ export default {
             }, languageSearchDebounce );
         };
 
+        /** Handle keyboard events */
         const onKeyDown = ( event ) => {
             if ( event.key === 'ArrowDown' ) {
                 event.preventDefault();
@@ -78,6 +93,7 @@ export default {
             } else if ( event.key === 'Enter' ) {
                 event.preventDefault();
                 if ( selectedIndex.value !== -1 ) {
+                    // eslint-disable-next-line no-unused-vars
                     const selectedItem = menuItems.value[ selectedIndex.value ];
                 }
             }
@@ -98,79 +114,96 @@ export default {
         } );
 
         const onClose = () => {
-            emit( 'close' );
+            isVisible.value = false;
         };
 
-        onMounted( () => {
-            dialogEl.value.showModal();
-            dialogEl.value.addEventListener( 'close', onClose );
-            listEl = dialogEl.value.querySelector( '.ls-language-list ul' );
+        const { floatingStyles } = useFloating( langaugeSelectorButtonRef, containerEl, {
+            placement: 'bottom-start',
+            whileElementsMounted: autoUpdate
         } );
 
-        onUnmounted( () => {
-            if ( dialogEl.value ) {
-                dialogEl.value.removeEventListener( 'close', onClose );
-            }
+        onMounted( () => {
+            watch( isVisible, ( visible ) => {
+                if ( visible && containerEl.value ) {
+                    listEl = containerEl.value.querySelector( '.ls-language-list ul' );
+                }
+            } );
         } );
 
         return {
-            dialogEl,
+            containerEl,
+            langaugeSelectorButtonRef,
             menuItems,
             inputValue,
             onSearch,
             onKeyDown,
             selectedIndex,
-            cdxIconSearch
+            cdxIconSearch,
+            cdxIconClose,
+            onClose,
+            floatingStyles,
+            isVisible
         };
     }
 };
 </script>
 <style>
-dialog {
+.floating-language-selector {
     width: 500px;
     display: flex;
     flex-direction: column;
     height: 500px;
     padding: 0;
-}
+    border: 1px solid #ccc;
+    background-color: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    z-index: 2;
 
-.ls-language-selector-dialog-header {
-    padding: 1em;
-    border-bottom: 1px solid #ccc;
-}
+    .ls-language-selector-header {
+        display: flex;
+        align-items: center;
+        gap: 0.5em;
+        padding: 1em;
+        border-bottom: 1px solid #ccc;
 
-.ls-language-list {
-    margin-top: 1em;
-    overflow-y: auto;
-    flex-grow: 1;
-    padding: 0 1em;
-}
+        .cdx-text-input {
+            flex-grow: 1;
+        }
+    }
 
-.ls-language-list ul {
-    list-style-type: none; 
-    padding: 0;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr); /* Add two equal-fraction columns */
-    gap: 10px; 
-}
+    .ls-language-list {
+        margin-top: 1em;
+        overflow-y: auto;
+        flex-grow: 1;
+        padding: 0 1em;
 
-.ls-language-list li a {
-    padding: 0.5em;
-    display: block;
-    text-decoration: none;
-    color: #333;
-}
+        ul {
+            list-style-type: none; 
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* Add two equal-fraction columns */
+            gap: 10px; 
+        }
 
-.ls-language-list li a:hover {
-    background-color: #f0f0f0;
-}
+        li a {
+            padding: 0.5em;
+            display: block;
+            text-decoration: none;
+            color: #333;
 
-.ls-language-list-item--selected a {
-    background-color: #aadaff;
-}
+            &:hover {
+                background-color: #f0f0f0;
+            }
+        }
 
-.ls-language-selector-dialog-footer {
-    padding: 0.5em;
-    border-top: 1px solid #ccc;
+        .ls-language-list-item--selected a {
+            background-color: #aadaff;
+        }
+    }
+
+    .ls-language-selector-dialog-footer {
+        padding: 0.5em;
+        border-top: 1px solid #ccc;
+    }
 }
 </style>
