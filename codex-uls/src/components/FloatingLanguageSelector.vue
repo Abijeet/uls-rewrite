@@ -38,6 +38,10 @@
             </ul>
         </div>
         <div class="ls-language-selector-dialog-footer">
+            <cdx-button action="progressive" weight="quiet">
+                <cdx-icon :icon="cdxIconAdd" />
+				Add Language
+			</cdx-button>
         </div>
     </div>
 </template>
@@ -46,7 +50,7 @@ import { computed, onMounted, ref, watch } from 'vue';
 import { CdxTextInput, CdxButton, CdxIcon } from '@wikimedia/codex';
 import { getLanguageAutonyms, searchLanguages } from '../repositories/Languages';
 import { languageSearchDebounce } from '../config/LanguageSelectorMenuConfig';
-import { cdxIconSearch, cdxIconClose, cdxIconClear } from '@wikimedia/codex-icons';
+import { cdxIconSearch, cdxIconClose, cdxIconClear, cdxIconAdd } from '@wikimedia/codex-icons';
 import { useFloating, autoUpdate } from '@floating-ui/vue';
 
 
@@ -169,6 +173,7 @@ export default {
             cdxIconSearch,
             cdxIconClose,
             cdxIconClear,
+            cdxIconAdd,
             onClose,
             floatingStyles,
             isVisible
