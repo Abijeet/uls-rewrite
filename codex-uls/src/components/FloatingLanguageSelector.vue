@@ -241,4 +241,19 @@ export default {
         border-top: 1px solid #ccc;
     }
 }
+
+@media (max-width: 720px) {
+    .floating-language-selector {
+        width: 100vw;
+        height: 100vh;
+        top: 0 !important;
+        left: 0 !important;
+        border: none;
+        box-shadow: none;
+
+        .ls-language-list ul {
+            grid-template-columns: 1fr;
+        }
+    }
+}
 </style>
