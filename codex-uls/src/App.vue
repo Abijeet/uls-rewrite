@@ -1,4 +1,18 @@
 <template>
+	<h2>Button based selector</h2>
+	<p>
+		A selector that opens a dialog which contains a language selector. 
+		This dialog can be customized to provide entrypoints.
+	</p>
+	<cdx-field>
+		<cdx-button @click="isFloatingLanguageSelectorVisible = !isFloatingLanguageSelectorVisible" ref="langaugeSelectorButtonRef">
+Open Language Selector
+</cdx-button>
+		<floating-language-selector
+			v-if="isFloatingLanguageSelectorVisible"
+			ref="floatingLanguageSelectorRef"
+			@close="isFloatingLanguageSelectorVisible = false" />
+	</cdx-field>
 	<hr>
 	<h2>Single language selector</h2>
 	<p>
@@ -57,27 +71,37 @@
 
 <script>
 import { computed, defineComponent, ref } from 'vue';
-import { CdxField, CdxTextInput } from '@wikimedia/codex';
+import { CdxField, CdxTextInput, CdxButton } from '@wikimedia/codex';
 import LanguageSelector from './components/LanguageSelector.vue';
 import MultipleLanguageSelector from './components/MultipleLanguageSelector.vue';
+import FloatingLanguageSelector from './components/FloatingLanguageSelector.vue';
 
 export default defineComponent( {
 	components: {
 		LanguageSelector,
 		MultipleLanguageSelector,
+		FloatingLanguageSelector,
 		CdxTextInput,
-		CdxField
+		CdxField,
+		CdxButton
 	},
     setup() {
 		const highlightedLanguages = ref( 'en,hi' );
+		const isFloatingLanguageSelectorVisible = ref( false );
 
 		const languagesToHighlight = computed( () => {
 			return highlightedLanguages.value.split( ',' ).map( lang => lang.trim() );
 		} );
 
+		const langaugeSelectorButtonRef = ref( null );
+		const floatingLanguageSelectorRef = ref( null );
+
 		return { 
 			highlightedLanguages,
-			languagesToHighlight
+			languagesToHighlight,
+			floatingLanguageSelectorRef,
+			langaugeSelectorButtonRef,
+			isFloatingLanguageSelectorVisible
 		};
     }
 } );
