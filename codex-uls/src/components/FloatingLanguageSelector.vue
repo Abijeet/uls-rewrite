@@ -1,7 +1,16 @@
 <template>
-    <cdx-button ref="langaugeSelectorButtonRef" @click="isVisible = !isVisible">
-        Choose language...
-    </cdx-button>
+    <div class="language-selector-trigger-wrapper">
+        <cdx-button ref="langaugeSelectorButtonRef" @click="isVisible = !isVisible">
+            {{ selectedLanguageLabel }}
+        </cdx-button>
+        <cdx-button
+            v-if="isLanguageSelected"
+            weight="quiet"
+            aria-label="Clear"
+            @click="onClear">
+            <cdx-icon :icon="cdxIconClear" />
+        </cdx-button>
+    </div>
     <div v-if="isVisible" ref="containerEl" class="floating-language-selector" :style="floatingStyles">
         <div class="ls-language-selector-header">
             <cdx-text-input
@@ -22,24 +31,26 @@
                 <li
                     v-for="( item, index ) in menuItems"
                     :key="item.value"
-                    :class="{ 'ls-language-list-item--selected': index === selectedIndex }">
+                    :class="{ 'ls-language-list-item--selected': index === selectedIndex }"
+                    @click="onSelect( item )">
                     <a href="#">{{ item.label }}</a>
                 </li>
             </ul>
         </div>
         <div class="ls-language-selector-dialog-footer">
-            <cdx-button @click="onClose">Close</cdx-button>
         </div>
     </div>
 </template>
 <script>
-import { onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { CdxTextInput, CdxButton, CdxIcon } from '@wikimedia/codex';
 import { getLanguageAutonyms, searchLanguages } from '../repositories/Languages';
 import { languageSearchDebounce } from '../config/LanguageSelectorMenuConfig';
-import { cdxIconSearch, cdxIconClose } from '@wikimedia/codex-icons';
+import { cdxIconSearch, cdxIconClose, cdxIconClear } from '@wikimedia/codex-icons';
 import { useFloating, autoUpdate } from '@floating-ui/vue';
 
+
+const defaultLabel = 'Choose language...';
 export default {
     name: 'FloatingLanguageSelector',
     components: {
@@ -47,8 +58,8 @@ export default {
         CdxButton,
         CdxIcon
     }, 
-    emits: [ 'close' ],
-    setup() {
+    emits: [ 'close', 'select' ],
+    setup( props, { emit } ) {
         const containerEl = ref( null );
         const langaugeSelectorButtonRef = ref( null );
         const allLanguageOptions = getLanguageAutonyms();
@@ -56,6 +67,8 @@ export default {
         const inputValue = ref( '' );
         const selectedIndex = ref( -1 );
         const isVisible = ref( false );
+        const selectedLanguageLabel = ref( defaultLabel );
+        const isLanguageSelected = computed( () => selectedLanguageLabel.value !== defaultLabel );
         let debounceTimer;
         let listEl;
 
@@ -78,6 +91,18 @@ export default {
             }, languageSearchDebounce );
         };
 
+        const onSelect = ( item ) => {
+            selectedLanguageLabel.value = item.label;
+            isVisible.value = false;
+            emit( 'select', item );
+        };
+
+        const onClear = () => {
+            selectedLanguageLabel.value = 'Choose language...';
+            isVisible.value = false;
+            emit( 'select', null );
+        };
+
         /** Handle keyboard events */
         const onKeyDown = ( event ) => {
             if ( event.key === 'ArrowDown' ) {
@@ -92,9 +117,8 @@ export default {
                 }
             } else if ( event.key === 'Enter' ) {
                 event.preventDefault();
-                if ( selectedIndex.value !== -1 ) {
-                    // eslint-disable-next-line no-unused-vars
-                    const selectedItem = menuItems.value[ selectedIndex.value ];
+                if ( selectedIndex.value > -1 ) {
+                    onSelect( menuItems.value[ selectedIndex.value ] );
                 }
             }
         };
@@ -137,9 +161,14 @@ export default {
             inputValue,
             onSearch,
             onKeyDown,
+            onSelect,
+            onClear,
             selectedIndex,
+            selectedLanguageLabel,
+            isLanguageSelected,
             cdxIconSearch,
             cdxIconClose,
+            cdxIconClear,
             onClose,
             floatingStyles,
             isVisible
@@ -148,6 +177,12 @@ export default {
 };
 </script>
 <style>
+.language-selector-trigger-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+}
+
 .floating-language-selector {
     width: 500px;
     display: flex;

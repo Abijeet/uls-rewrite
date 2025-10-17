@@ -1,8 +1,8 @@
 <template>
 	<h2>Button based selector</h2>
 	<p>
-		A selector that opens a dialog which contains a language selector. 
-		This dialog can be customized to provide entrypoints.
+		A selector that opens a custom container which display the languages. 
+		This custom container can be customized to provide entrypoints.
 	</p>
 	<cdx-field>
 		<floating-language-selector />
