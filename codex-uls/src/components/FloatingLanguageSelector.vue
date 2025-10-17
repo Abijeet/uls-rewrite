@@ -1,5 +1,5 @@
 <template>
-    <div class="language-selector-trigger-wrapper">
+    <div ref="triggerWrapperRef" class="language-selector-trigger-wrapper">
         <cdx-button ref="langaugeSelectorButtonRef" @click="isVisible = !isVisible">
             {{ selectedLanguageLabel }}
         </cdx-button>
@@ -46,13 +46,12 @@
     </div>
 </template>
 <script>
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch, nextTick } from 'vue';
 import { CdxTextInput, CdxButton, CdxIcon } from '@wikimedia/codex';
 import { getLanguageAutonyms, searchLanguages } from '../repositories/Languages';
 import { languageSearchDebounce } from '../config/LanguageSelectorMenuConfig';
 import { cdxIconSearch, cdxIconClose, cdxIconClear, cdxIconAdd } from '@wikimedia/codex-icons';
 import { useFloating, autoUpdate } from '@floating-ui/vue';
-
 
 const defaultLabel = 'Choose language...';
 export default {
@@ -66,6 +65,7 @@ export default {
     setup( props, { emit } ) {
         const containerEl = ref( null );
         const langaugeSelectorButtonRef = ref( null );
+        const triggerWrapperRef = ref( null );
         const allLanguageOptions = getLanguageAutonyms();
         const menuItems = ref( allLanguageOptions );
         const inputValue = ref( '' );
@@ -75,6 +75,17 @@ export default {
         const isLanguageSelected = computed( () => selectedLanguageLabel.value !== defaultLabel );
         let debounceTimer;
         let listEl;
+
+        const handleClickOutside = ( event ) => {
+            if (
+                containerEl.value &&
+                !containerEl.value.contains( event.target ) &&
+                triggerWrapperRef.value &&
+                !triggerWrapperRef.value.contains( event.target )
+            ) {
+                isVisible.value = false;
+            }
+        };
 
         /** Trigger search when text is entered */
         const onSearch = ( newValue ) => {
@@ -152,8 +163,15 @@ export default {
 
         onMounted( () => {
             watch( isVisible, ( visible ) => {
-                if ( visible && containerEl.value ) {
-                    listEl = containerEl.value.querySelector( '.ls-language-list ul' );
+                if ( visible ) {
+                    if ( containerEl.value ) {
+                        listEl = containerEl.value.querySelector( '.ls-language-list ul' );
+                    }
+                    nextTick( () => {
+                        document.addEventListener( 'mousedown', handleClickOutside );
+                    } );
+                } else {
+                    document.removeEventListener( 'mousedown', handleClickOutside );
                 }
             } );
         } );
@@ -161,6 +179,7 @@ export default {
         return {
             containerEl,
             langaugeSelectorButtonRef,
+            triggerWrapperRef,
             menuItems,
             inputValue,
             onSearch,
