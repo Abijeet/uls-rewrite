@@ -10,10 +10,15 @@
         inputEvents,
         selected,
         selectLanguage,
+        isOpen,
+        toggle,
       }"
     >
-      <div class="uls">
-        <div v-if="selected">Selected: {{ getAutonym(selected) }}</div>
+      <button @click="toggle" class="selected-language">
+        <span v-if="selected">Selected: {{ getAutonym(selected) }}</span>
+        <span v-else>Select Language</span>
+      </button>
+      <div class="uls" v-if="isOpen">
         <input
           type="search"
           class="language-search-query px-4 py-3"

@@ -28,6 +28,7 @@ export default {
     searchQuery: "",
     searchResults: [],
     selected: null,
+    isOpen: false,
   }),
 
   computed: {
@@ -74,8 +75,17 @@ export default {
   },
 
   methods: {
+    toggle() {
+      this.isOpen = !this.isOpen;
+    },
+
+    close() {
+      this.isOpen = false;
+    },
+
     selectLanguage: function (language) {
       this.selected = language;
+      this.close();
     },
     /**
      * @param {string} [query]
@@ -143,6 +153,9 @@ export default {
       resultsDisplayClass: this.resultsDisplayClass,
       selected: this.selected,
       selectLanguage: this.selectLanguage,
+      isOpen: this.isOpen,
+      toggle: this.toggle,
+      close: this.close,
       inputAttrs: {
         value: this.searchQuery,
       },
