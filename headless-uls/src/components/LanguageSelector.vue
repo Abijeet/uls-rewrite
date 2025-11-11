@@ -20,8 +20,7 @@ export default {
      */
     searchAPI: {
       type: String,
-      default:
-        "https://en.wikipedia.org/w/api.php?action=languagesearch&format=json&formatversion=2",
+      default: () => null,
     },
   },
 
@@ -83,7 +82,13 @@ export default {
         return this.languages;
       }
 
-      // See if the search query is a language code
+      if (this.searchAPI) {
+        const searchApiResults = await this.searchWithAPI(this.searchQuery);
+        // Remove the languages not known to this selector.
+        return searchApiResults.filter((code) => this.languages.includes(code));
+      }
+
+      // If no search API is provided, do a client side search
       const exactMatch = this.languages.filter(
         (code) => query.toLowerCase() === code.toLowerCase()
       );
@@ -108,14 +113,6 @@ export default {
 
       if (filterResults.length) {
         return filterResults;
-      }
-
-      // We did not find any results from client side search.
-      // Attempt a search using the given search API
-      if (this.searchAPI) {
-        const searchApiResults = await this.searchWithAPI(this.searchQuery);
-        // Remove the languages not known to this selector.
-        return searchApiResults.filter((code) => this.languages.includes(code));
       }
 
       return [];
