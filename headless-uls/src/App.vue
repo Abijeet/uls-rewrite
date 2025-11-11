@@ -8,9 +8,12 @@
         resultsDisplayClass,
         inputAttrs,
         inputEvents,
+        selected,
+        selectLanguage,
       }"
     >
       <div class="uls">
+        <div v-if="selected">Selected: {{ getAutonym(selected) }}</div>
         <input
           type="search"
           class="language-search-query px-4 py-3"
@@ -34,7 +37,7 @@
               :lang="language"
               :dir="getDir(language)"
               role="button"
-              @click="select(language)"
+              @click="selectLanguage(language)"
               v-text="getAutonym(language)"
             />
           </section>

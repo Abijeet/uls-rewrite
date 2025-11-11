@@ -27,6 +27,7 @@ export default {
   data: () => ({
     searchQuery: "",
     searchResults: [],
+    selected: null,
   }),
 
   computed: {
@@ -73,6 +74,9 @@ export default {
   },
 
   methods: {
+    selectLanguage: function (language) {
+      this.selected = language;
+    },
     /**
      * @param {string} [query]
      * @return {Promise<string[]>}
@@ -137,6 +141,8 @@ export default {
       searchResults: this.searchResults,
       searchResultsByScript: this.searchResultsByScript,
       resultsDisplayClass: this.resultsDisplayClass,
+      selected: this.selected,
+      selectLanguage: this.selectLanguage,
       inputAttrs: {
         value: this.searchQuery,
       },
