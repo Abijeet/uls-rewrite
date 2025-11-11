@@ -48,7 +48,8 @@ jobs:
 
       - name: Prepare deployment
         run: |
-          mkdir -p deploy
+          mkdir -p deploy/codex-uls
+          mkdir -p deploy/headless-uls
           cp -r codex-uls/dist/* deploy/codex-uls/
           cp -r headless-uls/dist/* deploy/headless-uls/
 
