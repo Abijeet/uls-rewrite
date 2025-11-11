@@ -10,7 +10,7 @@ export default {
      * If not passed, all languages known to langaugedata library
      * will be used.
      */
-    value: {
+    selectableLanguages: {
       type: Array,
       default: () => null,
     },
@@ -33,7 +33,7 @@ export default {
 
   computed: {
     allLanguages: () => Object.keys(languagedata.getLanguages()),
-    languages: (vm) => vm.value || vm.allLanguages,
+    languages: (vm) => vm.selectableLanguages || vm.allLanguages,
     availableLanguages: () => languagedata.getLanguages(),
     searchResultsByScript: (vm) => {
       let chunkSize;

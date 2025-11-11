@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <LanguageSelector
-      v-model="languages"
+      :selectableLanguages="languages"
       :searchAPI="searchAPI"
       v-slot="{
         searchResultsByScript,

@@ -34,7 +34,7 @@ describe("LanguageSelector", () => {
 
   test("searches for a language", async () => {
     const wrapper = mountComponent({
-      value: ["en", "es", "fr"],
+      selectableLanguages: ["en", "es", "fr"],
     });
     wrapper.vm.searchQuery = "es";
     await wrapper.vm.$nextTick();
