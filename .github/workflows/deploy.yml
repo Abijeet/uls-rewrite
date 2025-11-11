@@ -51,10 +51,27 @@ jobs:
 
       - name: Prepare deployment
         run: |
+          # custom the directories path for both demo pages
+          # /codex-uls/
+          # /headless-uls/
+          # /assets/
           mkdir -p deploy/codex-uls
           mkdir -p deploy/headless-uls
-          cp -r codex-uls/dist/* deploy/codex-uls/
-          cp -r headless-uls/dist/* deploy/headless-uls/
+          mkdir -p deploy/assets
+          
+          # Copy codex-uls index.html
+          cp codex-uls/dist/index.html deploy/codex-uls/
+          
+          # Copy headless-uls index.html
+          cp headless-uls/dist/index.html deploy/headless-uls/
+          
+          # Merge assets from both builds into shared assets folder
+          if [ -d "codex-uls/dist/assets" ]; then
+            cp -r codex-uls/dist/assets/* deploy/assets/ 2>/dev/null || true
+          fi
+          if [ -d "headless-uls/dist/assets" ]; then
+            cp -r headless-uls/dist/assets/* deploy/assets/ 2>/dev/null || true
+          fi
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
