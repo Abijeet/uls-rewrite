@@ -2,20 +2,29 @@ import { mount } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 import LanguageSelector from "../src/components/LanguageSelector.vue";
 
+const mountComponent = (props = {}) => {
+  return mount(LanguageSelector, {
+    props,
+    slots: {
+      default: `<template #default="props"></template>`,
+    },
+  });
+};
+
 describe("LanguageSelector", () => {
   test("initializes with no selected language", () => {
-    const wrapper = mount(LanguageSelector);
+    const wrapper = mountComponent();
     expect(wrapper.vm.selected).toBe(null);
   });
 
   test("can select a language", async () => {
-    const wrapper = mount(LanguageSelector);
+    const wrapper = mountComponent();
     await wrapper.vm.selectLanguage("es");
     expect(wrapper.vm.selected).toBe("es");
   });
 
   test("opens and closes", async () => {
-    const wrapper = mount(LanguageSelector);
+    const wrapper = mountComponent();
     expect(wrapper.vm.isOpen).toBe(false);
     await wrapper.vm.toggle();
     expect(wrapper.vm.isOpen).toBe(true);
@@ -24,10 +33,8 @@ describe("LanguageSelector", () => {
   });
 
   test("searches for a language", async () => {
-    const wrapper = mount(LanguageSelector, {
-      props: {
-        value: ["en", "es", "fr"],
-      },
+    const wrapper = mountComponent({
+      value: ["en", "es", "fr"],
     });
     wrapper.vm.searchQuery = "es";
     await wrapper.vm.$nextTick();
