@@ -18,13 +18,13 @@
 </template>
 
 <script>
-const { defineComponent, ref, inject } = require( 'vue' );
-const { CdxButton, CdxDialog, CdxTabs, CdxTab, CdxIcon, CdxCheckbox, CdxField, CdxRadio } = require( '@wikimedia/codex' );
-const { cdxIconArrowPrevious } = require( './icons.json' );
-const AddLanguagesMenuItemDefault = require( './AddLanguagesMenuItemDefault.vue' );
+import { defineComponent, ref, inject } from 'vue';
+import { CdxButton, CdxDialog, CdxTabs, CdxTab, CdxIcon, CdxCheckbox, CdxField, CdxRadio } from '@wikimedia/codex';
+import { cdxIconArrowPrevious } from '@wikimedia/codex-icons';
+import AddLanguagesMenuItemDefault from './AddLanguagesMenuItemDefault.vue';
 
 // @vue/component
-module.exports = defineComponent( {
+export default defineComponent( {
 	components: { CdxButton, CdxDialog, CdxTabs, CdxTab, CdxIcon, CdxCheckbox, CdxField, CdxRadio },
 	props: {
 		modelValue: { type: Boolean, default: false }
@@ -37,8 +37,8 @@ module.exports = defineComponent( {
 				label: 'Edit interwiki links'
 			}
 		] );
-		const addLanguagesMenuItems = inject( 'addLanguagesMenuItems' );
-		defaultItems.value = [ ...defaultItems.value, ...addLanguagesMenuItems ];
+		const addLanguagesMenuItems = inject( 'addLanguagesMenuItems', [] );
+		defaultItems.value = [ ...defaultItems.value, ...( addLanguagesMenuItems || [] ) ];
 
 		const menuComponents = ref( [] );
 		menuComponents.value = defaultItems.value.map( ( item ) => ( {

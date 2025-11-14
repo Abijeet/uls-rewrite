@@ -110,24 +110,15 @@
 </template>
 
 <script>
-const { defineComponent, ref, watch, computed } = require( 'vue' );
-const { cdxIconEllipsis } = require( './icons.json' );
-const { CdxButton, CdxDialog, CdxTabs, CdxTab, CdxIcon, CdxCheckbox, CdxField, CdxRadio, CdxButtonGroup } = require( '@wikimedia/codex' );
-const MyLanguageSelector = require( './MyLanguageSelector.vue' );
-const { getAllLanguages, assignAttributeToRandomLanguages, groupLanguagesByGroup } = require( './demoHelpers.js' );
-const GROUP_TITLES = {
-	suggested: 'Suggested',
-	WW: 'Worldwide',
-	EU: 'Europe',
-	AM: 'America',
-	AS: 'Asia',
-	AF: 'Africa',
-	PA: 'Pacific',
-	ME: 'Middle East'
-};
+import { defineComponent, ref, watch, computed } from 'vue';
+import { CdxButton, CdxDialog, CdxTabs, CdxTab, CdxIcon, CdxCheckbox, CdxField, CdxRadio, CdxButtonGroup } from '@wikimedia/codex';
+import { cdxIconEllipsis } from '@wikimedia/codex-icons';
+import MyLanguageSelector from './MyLanguageSelector.vue';
+import { getAllLanguages, assignAttributeToRandomLanguages, groupLanguagesByGroup } from './demoHelpers.js';
+import { GROUP_TITLES } from '../constants/groupTitles.js';
 
 // @vue/component
-module.exports = defineComponent( {
+export default defineComponent( {
 	components: {
 		CdxButton,
 		CdxDialog,

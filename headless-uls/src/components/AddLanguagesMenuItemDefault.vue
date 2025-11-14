@@ -5,10 +5,10 @@
 </template>
 
 <script>
-const { defineComponent } = require( 'vue' );
+import { defineComponent } from 'vue';
 
 // @vue/component
-module.exports = defineComponent( {
+export default defineComponent( {
 	props: {
 		href: { type: String, required: true },
 		label: { type: String, required: true }
