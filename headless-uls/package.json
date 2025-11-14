@@ -9,6 +9,8 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@wikimedia/codex": "^2.3.0",
+    "@wikimedia/codex-icons": "^2.3.0",
     "@wikimedia/language-data": "1.0.2",
     "vue": "^3.4.21"
   },
