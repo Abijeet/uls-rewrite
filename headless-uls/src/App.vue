@@ -73,6 +73,7 @@
           :is-fullscreen="false"
           :loading="loading"
           :selected="selectedLanguage"
+          :searchAPI="searchAPI"
           @update:selected="onLanguageSelect"
           v-slot="{
             filteredLanguages,
@@ -177,7 +178,7 @@ export default {
   data() {
     return {
       searchAPI:
-        "https://en.wikipedia.org/w/api.php?action=languagesearch&format=json&formatversion=2",
+        "https://en.wikipedia.org/w/api.php?action=languagesearch&format=json&formatversion=2&origin=*",
       // languages: ["en", "es", "fr", "hi", "or", "ta", "ml", "zh"],
       languageGroups: [],
       selectedLanguage: null,

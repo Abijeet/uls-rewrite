@@ -14,7 +14,11 @@ export default {
     columns: { type: Number, default: 1 },
     isFullscreen: { type: Boolean, default: false },
     loading: { type: Boolean, default: false },
-    selected: { type: Object, default: null }
+    selected: { type: Object, default: null },
+    searchAPI: {
+      type: String,
+      default: () => null,
+    },
   },
 
   emits: [ 'update:selected', 'close' ],
@@ -79,9 +83,8 @@ export default {
       }
       this.searchValue = query;
 
-      // Use Wikipedia API endpoint for language search
-      const endpoint = 'https://en.wikipedia.org/w/api.php?action=languagesearch&format=json&formatversion=2&origin=*';
-
+      // Use provided searchAPI
+      const endpoint = this.searchAPI;
       const url = `${endpoint}&${new URLSearchParams({ search: query })}`;
 
       try {
