@@ -216,6 +216,7 @@ export default {
 </script>
 
 <style lang="less">
+@import '@wikimedia/codex/dist/codex.style.css';
 @import './styles/mediawiki.skin.variables.less';
 
 #app {
@@ -278,6 +279,8 @@ export default {
 
     .uls-language-search-input {
       margin-bottom: @spacing-100;
+      width: 100%;
+      display: block;
     }
 
     .language-group {
