@@ -80,7 +80,8 @@ export default {
       this.searchValue = query;
 
       // Use Wikipedia API endpoint for language search
-      const endpoint = 'https://en.wikipedia.org/w/api.php?action=languagesearch&format=json&formatversion=2';
+      const endpoint = 'https://en.wikipedia.org/w/api.php?action=languagesearch&format=json&formatversion=2&origin=*';
+
       const url = `${endpoint}&${new URLSearchParams({ search: query })}`;
 
       try {
