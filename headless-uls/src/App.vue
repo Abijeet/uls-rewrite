@@ -73,6 +73,7 @@
           :is-fullscreen="false"
           :loading="loading"
           :selected="selectedLanguage"
+          @update:selected="onLanguageSelect"
           v-slot="{
             filteredLanguages,
             isGrouped,
