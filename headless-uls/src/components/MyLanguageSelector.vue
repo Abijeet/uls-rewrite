@@ -52,13 +52,6 @@ export default {
       return languages.filter(filterFn);
     },
 
-    gridStyle() {
-      return {
-        display: 'grid',
-        gridTemplateColumns: `repeat(${this.columns}, 1fr)`,
-        gap: '0.5rem'
-      };
-    },
 
     // Menu items for MultiselectLookup format
     menuItems() {
@@ -171,7 +164,6 @@ export default {
       // Data
       filteredLanguages: this.filteredLanguages,
       isGrouped: this.isGrouped,
-      gridStyle: this.gridStyle,
       searchValue: this.searchValue,
       loading: this.loading || this.isSearching,
       selected: this.selected,
@@ -185,19 +177,6 @@ export default {
       onLanguageItemClick: this.onLanguageItemClick,
       onCloseButtonClicked: this.onCloseButtonClicked,
       onSearchUpdate: this.onSearchUpdate,
-
-      // Search input attrs/events
-      searchInputAttrs: {
-        value: this.searchValue,
-        clearable: true,
-        placeholder: 'Search',
-        'aria-label': 'Search languages',
-      },
-      searchInputEvents: {
-        'update:model-value': (value) => {
-          this.onSearchUpdate(value);
-        },
-      },
     });
   },
 };

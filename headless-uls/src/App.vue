@@ -78,7 +78,6 @@
           v-slot="{
             filteredLanguages,
             isGrouped,
-            gridStyle,
             searchValue,
             loading: isLoading,
             selected: selectedLang,
@@ -86,16 +85,18 @@
             compareCodes,
             onLanguageItemClick,
             onCloseButtonClicked,
-            searchInputAttrs,
-            searchInputEvents,
+            onSearchUpdate,
           }"
         >
           <div class="my-language-selector">
             <div class="my-language-selector-wrapper-root">
               <cdx-search-input
-                v-bind="searchInputAttrs"
-                v-on="searchInputEvents"
+                :model-value="searchValue"
+                :clearable="true"
+                placeholder="Search languages"
+                aria-label="Search languages"
                 class="uls-language-search-input"
+                @update:model-value="onSearchUpdate"
               ></cdx-search-input>
               <cdx-progress-bar v-if="isLoading" inline></cdx-progress-bar>
               <div class="my-language-selector__body">
@@ -108,7 +109,7 @@
                       class="language-group"
                     >
                       <h4 class="language-group-title">{{ group.title }}</h4>
-                      <ul class="language-list" :style="gridStyle">
+                      <ul class="language-list" :style="languageGridStyle">
                         <li
                           v-for="lang in group.languages"
                           :key="lang.code"
@@ -130,7 +131,7 @@
 
                   <!-- Case 2: Flat languages -->
                   <template v-else>
-                    <ul class="language-list" :style="gridStyle">
+                    <ul class="language-list" :style="languageGridStyle">
                       <li
                         v-for="lang in filteredLanguages"
                         :key="lang.code"
@@ -250,6 +251,15 @@ export default {
       this.languageGroups = [];
       this.allLanguagesForMultiselect = [];
     }
+  },
+  computed: {
+    languageGridStyle() {
+      return {
+        display: 'grid',
+        gridTemplateColumns: 'repeat(3, 1fr)',
+        gap: '0.5rem'
+      };
+    },
   },
   methods: {
     getLanguages,
