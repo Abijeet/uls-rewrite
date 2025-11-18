@@ -344,14 +344,13 @@ export default {
     background-color: @background-color-base;
     border: 1px solid @border-color-subtle;
     padding: @spacing-50 @spacing-75;
-    max-width: 600px;
 
     .cdx-progress-bar {
       margin-block-end: @spacing-50;
     }
 
     .my-language-selector__languages {
-      max-height: @size-800;
+      max-height: @size-1200;
       overflow-y: auto;
     }
 
