@@ -27,6 +27,8 @@ export default {
     return {
       searchValue: '',
       languageFilter: null,
+      isSearching: false,
+      searchDebounceTimer: null,
     };
   },
 
@@ -57,6 +59,39 @@ export default {
         gap: '0.5rem'
       };
     },
+
+    // Menu items for MultiselectLookup format
+    menuItems() {
+      let languages = this.languages;
+      if (this.isGrouped) {
+        languages = flattenLanguageGroups(this.languages);
+      }
+
+      // If there's a language filter from search, apply it
+      // If no search value, show all languages
+      if (this.searchValue && this.languageFilter) {
+        languages = languages.filter(lang => lang.code in this.languageFilter);
+      }
+
+      return languages.map(lang => ({
+        label: lang.autonym,
+        value: lang.code,
+        description: lang.code,
+      }));
+    },
+
+    // All languages as menu items (for initial display)
+    allMenuItems() {
+      let languages = this.languages;
+      if (this.isGrouped) {
+        languages = flattenLanguageGroups(this.languages);
+      }
+      return languages.map(lang => ({
+        label: lang.autonym,
+        value: lang.code,
+        description: lang.code,
+      }));
+    },
   },
 
   methods: {
@@ -75,15 +110,24 @@ export default {
       this.$emit('close');
     },
 
-    async onSearchUpdate(query) {
-      if (!query) {
+    // Core search method
+    async performSearch(query) {
+      if (!query || query.trim() === '') {
         this.languageFilter = null;
         this.searchValue = '';
+        this.isSearching = false;
         return;
       }
+
       this.searchValue = query;
 
       // Use provided searchAPI
+      if (!this.searchAPI) {
+        this.languageFilter = null;
+        return;
+      }
+
+      this.isSearching = true;
       const endpoint = this.searchAPI;
       const url = `${endpoint}&${new URLSearchParams({ search: query })}`;
 
@@ -97,7 +141,28 @@ export default {
       } catch (error) {
         console.error('Error searching languages:', error);
         this.languageFilter = null;
+      } finally {
+        this.isSearching = false;
       }
+    },
+
+    onSearchUpdate(query) {
+      // Clear previous debounce timer
+      if (this.searchDebounceTimer) {
+        clearTimeout(this.searchDebounceTimer);
+      }
+
+      // If query is empty, reset the search
+      if (!query || query.trim() === '') {
+        this.performSearch('');
+        return;
+      }
+
+      // Debounce the search API call
+      const currentQuery = query;
+      this.searchDebounceTimer = setTimeout(() => {
+        this.performSearch(currentQuery);
+      }, 300);
     },
   },
 
@@ -108,9 +173,12 @@ export default {
       isGrouped: this.isGrouped,
       gridStyle: this.gridStyle,
       searchValue: this.searchValue,
-      loading: this.loading,
+      loading: this.loading || this.isSearching,
       selected: this.selected,
       isFullscreen: this.isFullscreen,
+      // Multiselect data
+      menuItems: this.menuItems,
+      allMenuItems: this.allMenuItems,
 
       // Methods
       compareCodes: this.compareCodes,

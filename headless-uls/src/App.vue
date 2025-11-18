@@ -86,7 +86,6 @@
             compareCodes,
             onLanguageItemClick,
             onCloseButtonClicked,
-            onSearchUpdate,
             searchInputAttrs,
             searchInputEvents,
           }"
@@ -155,6 +154,42 @@
           </div>
         </my-language-selector>
       </div>
+
+      <!-- MultiselectLookup Language Selector -->
+      <div class="demo-section">
+        <h2>MultiselectLookup Language Selector</h2>
+        <p v-if="selectedLanguages.length > 0">
+          Selected: <strong>{{ selectedLanguages.map(code => getAutonym(code)).join(', ') }}</strong>
+        </p>
+        <p v-else>No languages selected</p>
+        <my-language-selector
+          :languages="allLanguagesForMultiselect"
+          :searchAPI="searchAPI"
+          v-slot="{
+            menuItems,
+            allMenuItems,
+            loading: isLoading,
+            onSearchUpdate,
+          }"
+        >
+          <cdx-multiselect-lookup
+            v-model:selected="selectedLanguages"
+            v-model:input-chips="selectedLanguageChips"
+            v-model:input-value="multiselectInputValue"
+            :menu-items="menuItems"
+            :menu-config="multiselectMenuConfig"
+            placeholder="Search and select languages"
+            aria-label="Multiselect language selector"
+            :keep-input-on-selection="true"
+            @input="onSearchUpdate"
+            @update:selected="onMultiselectSelected"
+          >
+            <template #no-results>
+              No languages found.
+            </template>
+          </cdx-multiselect-lookup>
+        </my-language-selector>
+      </div>
     </div>
   </div>
 </template>
@@ -164,7 +199,7 @@ import LanguageSelector from "./components/LanguageSelector.vue";
 import MyLanguageSelector from "./components/MyLanguageSelector.vue";
 import { getLanguages, getAutonym, getDir } from "@wikimedia/language-data";
 import { getAllLanguages, assignAttributeToRandomLanguages, groupLanguagesByGroup } from "./components/demoHelpers.js";
-import { CdxSearchInput, CdxProgressBar } from "@wikimedia/codex";
+import { CdxSearchInput, CdxProgressBar, CdxMultiselectLookup } from "@wikimedia/codex";
 import { GROUP_TITLES } from "./constants/groupTitles.js";
 
 export default {
@@ -174,6 +209,7 @@ export default {
     MyLanguageSelector,
     CdxSearchInput,
     CdxProgressBar,
+    CdxMultiselectLookup,
   },
   data() {
     return {
@@ -183,6 +219,15 @@ export default {
       languageGroups: [],
       selectedLanguage: null,
       loading: false,
+      // MultiselectLookup state (UI only)
+      selectedLanguages: [],
+      selectedLanguageChips: [],
+      multiselectInputValue: '',
+      multiselectMenuConfig: {
+        visibleItemLimit: 10,
+        boldLabel: true,
+      },
+      allLanguagesForMultiselect: [],
     };
   },
   mounted() {
@@ -196,10 +241,14 @@ export default {
         0.1 // 10% chance of being suggested
       );
       this.languageGroups = groupLanguagesByGroup(languagesWithSuggested, GROUP_TITLES);
+      
+      // Setup languages for MultiselectLookup (business logic will handle menu items)
+      this.allLanguagesForMultiselect = allLanguages;
     } catch (error) {
       console.error('Error initializing language groups:', error);
       // Fallback to empty array if there's an error
       this.languageGroups = [];
+      this.allLanguagesForMultiselect = [];
     }
   },
   methods: {
@@ -212,6 +261,16 @@ export default {
     },
     onClose() {
       console.log('Language selector closed');
+    },
+    onMultiselectSelected() {
+      this.selectedLanguageChips = this.selectedLanguages.map(code => {
+        const autonym = getAutonym(code);
+        return {
+          label: autonym || code,
+          value: code,
+        };
+      });
+      console.log('Selected languages:', this.selectedLanguages);
     },
   },
 };
@@ -275,7 +334,7 @@ export default {
     }
 
     .my-language-selector__languages {
-      max-height: @size-1600;
+      max-height: @size-800;
       overflow-y: auto;
     }
 
