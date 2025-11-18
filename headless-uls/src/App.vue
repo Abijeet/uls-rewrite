@@ -320,7 +320,7 @@ export default {
   }
 
   h1, h2 {
-    color: @color-base--emphasized;
+    color: #000;
     margin-bottom: @spacing-100;
   }
 

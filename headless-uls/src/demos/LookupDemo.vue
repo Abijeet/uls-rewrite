@@ -94,7 +94,7 @@ export default {
   }
 
   h2 {
-    color: @color-base--emphasized;
+    color: #000;
     margin-bottom: @spacing-100;
     font-size: 1.25rem;
   }
