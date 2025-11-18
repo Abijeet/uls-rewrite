@@ -156,6 +156,11 @@
         </my-language-selector>
       </div>
 
+      <LookupDemo
+        :searchAPI="searchAPI"
+        :allLanguages="allLanguagesForMultiselect"
+      />
+
       <!-- MultiselectLookup Language Selector -->
       <div class="demo-section">
         <h2>MultiselectLookup Language Selector</h2>
@@ -198,6 +203,7 @@
 <script>
 import LanguageSelector from "./components/LanguageSelector.vue";
 import MyLanguageSelector from "./components/MyLanguageSelector.vue";
+import LookupDemo from "./demos/LookupDemo.vue";
 import { getLanguages, getAutonym, getDir } from "@wikimedia/language-data";
 import { getAllLanguages, assignAttributeToRandomLanguages, groupLanguagesByGroup } from "./components/demoHelpers.js";
 import { CdxSearchInput, CdxProgressBar, CdxMultiselectLookup } from "@wikimedia/codex";
@@ -208,6 +214,7 @@ export default {
   components: {
     LanguageSelector,
     MyLanguageSelector,
+    LookupDemo,
     CdxSearchInput,
     CdxProgressBar,
     CdxMultiselectLookup,
