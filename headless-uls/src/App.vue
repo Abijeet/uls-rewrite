@@ -7,11 +7,22 @@
         :searchAPI="searchAPI"
       />
 
+      <div class="columns-control">
+        <cdx-field>
+          Number of columns:
+          <cdx-select
+            v-model:selected="selectedColumns"
+            :menu-items="columnOptions"
+            aria-label="Select number of columns"
+          />
+        </cdx-field>
+      </div>
+
       <MyLanguageSelectorDemo
         :searchAPI="searchAPI"
         :languageGroups="languageGroups"
         :selectedLanguage="selectedLanguage"
-        :columns="3"
+        :columns="selectedColumns"
         @update:selectedLanguage="onLanguageSelect"
       />
 
@@ -35,6 +46,7 @@ import LanguageSelectorDemo from "./demos/LanguageSelectorDemo.vue";
 import MyLanguageSelectorDemo from "./demos/MyLanguageSelectorDemo.vue";
 import LookupDemo from "./demos/LookupDemo.vue";
 import MultiselectLookupDemo from "./demos/MultiselectLookupDemo.vue";
+import { CdxField, CdxSelect } from "@wikimedia/codex";
 import { getAllLanguages, assignAttributeToRandomLanguages, groupLanguagesByGroup } from "./components/demoHelpers.js";
 import { GROUP_TITLES } from "./constants/groupTitles.js";
 
@@ -47,6 +59,8 @@ export default {
     MyLanguageSelectorDemo,
     LookupDemo,
     MultiselectLookupDemo,
+    CdxField,
+    CdxSelect,
   },
   data() {
     return {
@@ -56,6 +70,13 @@ export default {
       languageGroups: [],
       selectedLanguage: null,
       allLanguagesForMultiselect: [],
+      selectedColumns: 3,
+      columnOptions: [
+        { label: "1 column", value: 1 },
+        { label: "2 columns", value: 2 },
+        { label: "3 columns", value: 3 },
+        { label: "4 columns", value: 4 },
+      ],
     };
   },
   mounted() {
