@@ -161,41 +161,10 @@
         :allLanguages="allLanguagesForMultiselect"
       />
 
-      <!-- MultiselectLookup Language Selector -->
-      <div class="demo-section">
-        <h2>MultiselectLookup Language Selector</h2>
-        <p v-if="selectedLanguages.length > 0">
-          Selected: <strong>{{ selectedLanguages.map(code => getAutonym(code)).join(', ') }}</strong>
-        </p>
-        <p v-else>No languages selected</p>
-        <my-language-selector
-          :languages="allLanguagesForMultiselect"
-          :searchAPI="searchAPI"
-          v-slot="{
-            menuItems,
-            allMenuItems,
-            loading: isLoading,
-            onSearchUpdate,
-          }"
-        >
-          <cdx-multiselect-lookup
-            v-model:selected="selectedLanguages"
-            v-model:input-chips="selectedLanguageChips"
-            v-model:input-value="multiselectInputValue"
-            :menu-items="menuItems"
-            :menu-config="multiselectMenuConfig"
-            placeholder="Search and select languages"
-            aria-label="Multiselect language selector"
-            :keep-input-on-selection="true"
-            @input="onSearchUpdate"
-            @update:selected="onMultiselectSelected"
-          >
-            <template #no-results>
-              No languages found.
-            </template>
-          </cdx-multiselect-lookup>
-        </my-language-selector>
-      </div>
+      <MultiselectLookupDemo
+        :searchAPI="searchAPI"
+        :allLanguages="allLanguagesForMultiselect"
+      />
     </div>
   </div>
 </template>
@@ -204,9 +173,10 @@
 import LanguageSelector from "./components/LanguageSelector.vue";
 import MyLanguageSelector from "./components/MyLanguageSelector.vue";
 import LookupDemo from "./demos/LookupDemo.vue";
+import MultiselectLookupDemo from "./demos/MultiselectLookupDemo.vue";
 import { getLanguages, getAutonym, getDir } from "@wikimedia/language-data";
 import { getAllLanguages, assignAttributeToRandomLanguages, groupLanguagesByGroup } from "./components/demoHelpers.js";
-import { CdxSearchInput, CdxProgressBar, CdxMultiselectLookup } from "@wikimedia/codex";
+import { CdxSearchInput, CdxProgressBar } from "@wikimedia/codex";
 import { GROUP_TITLES } from "./constants/groupTitles.js";
 
 export default {
@@ -215,9 +185,9 @@ export default {
     LanguageSelector,
     MyLanguageSelector,
     LookupDemo,
+    MultiselectLookupDemo,
     CdxSearchInput,
     CdxProgressBar,
-    CdxMultiselectLookup,
   },
   data() {
     return {
@@ -227,14 +197,6 @@ export default {
       languageGroups: [],
       selectedLanguage: null,
       loading: false,
-      // MultiselectLookup state (UI only)
-      selectedLanguages: [],
-      selectedLanguageChips: [],
-      multiselectInputValue: '',
-      multiselectMenuConfig: {
-        visibleItemLimit: 10,
-        boldLabel: true,
-      },
       allLanguagesForMultiselect: [],
     };
   },
@@ -278,16 +240,6 @@ export default {
     },
     onClose() {
       console.log('Language selector closed');
-    },
-    onMultiselectSelected() {
-      this.selectedLanguageChips = this.selectedLanguages.map(code => {
-        const autonym = getAutonym(code);
-        return {
-          label: autonym || code,
-          value: code,
-        };
-      });
-      console.log('Selected languages:', this.selectedLanguages);
     },
   },
 };
