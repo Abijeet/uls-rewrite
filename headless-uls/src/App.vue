@@ -11,6 +11,7 @@
         :searchAPI="searchAPI"
         :languageGroups="languageGroups"
         :selectedLanguage="selectedLanguage"
+        :columns="3"
         @update:selectedLanguage="onLanguageSelect"
       />
 

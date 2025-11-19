@@ -120,6 +120,10 @@ export default {
       type: Object,
       default: null,
     },
+    columns: {
+      type: Number,
+      default: 3,
+    },
   },
   emits: ['update:selectedLanguage'],
   data() {
@@ -131,7 +135,7 @@ export default {
     languageGridStyle() {
       return {
         display: 'grid',
-        gridTemplateColumns: 'repeat(3, 1fr)',
+        gridTemplateColumns: `repeat(${this.columns}, 1fr)`,
         gap: '0.5rem'
       };
     },
