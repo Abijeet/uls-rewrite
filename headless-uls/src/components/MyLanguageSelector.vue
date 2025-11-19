@@ -11,13 +11,10 @@ export default {
      *  - Array<{ code, title, languages: Array<{ code, autonym, tooltip? }> }>
      */
     languages: { type: Array, required: true },
-    columns: { type: Number, default: 1 },
-    isFullscreen: { type: Boolean, default: false },
-    loading: { type: Boolean, default: false },
     selected: { type: Object, default: null },
     searchAPI: {
-      type: String,
-      default: () => null,
+    type: String,
+    default: () => null,
     },
   },
 
@@ -165,9 +162,8 @@ export default {
       filteredLanguages: this.filteredLanguages,
       isGrouped: this.isGrouped,
       searchValue: this.searchValue,
-      loading: this.loading || this.isSearching,
+      loading: this.isSearching,
       selected: this.selected,
-      isFullscreen: this.isFullscreen,
       // Multiselect data
       menuItems: this.menuItems,
       allMenuItems: this.allMenuItems,

@@ -9,7 +9,6 @@
       :languages="languageGroups"
       :columns="3"
       :is-fullscreen="false"
-      :loading="loading"
       :selected="selectedLanguage"
       :searchAPI="searchAPI"
       @update:selected="onLanguageSelect"
@@ -126,11 +125,6 @@ export default {
     },
   },
   emits: ['update:selectedLanguage'],
-  data() {
-    return {
-      loading: false,
-    };
-  },
   computed: {
     languageGridStyle() {
       return {
