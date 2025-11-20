@@ -58,6 +58,7 @@
                       :data-code="lang.code"
                       @click="onLanguageItemClick(lang)"
                     >
+                      <cdx-icon v-if="isStarred(lang)" :icon="cdxIconStar" size="x-small" class="language-item__star" />
                       <span :lang="lang.code" :dir="getDir(lang.code)">
                         {{ lang.autonym }}
                       </span>
@@ -79,11 +80,12 @@
                     :title="lang.tooltip || lang.autonym"
                     :data-code="lang.code"
                     @click="onLanguageItemClick(lang)"
-                  >
-                    <span :lang="lang.code" :dir="getDir(lang.code)">
-                      {{ lang.autonym }}
-                    </span>
-                  </li>
+                    >
+                      <cdx-icon v-if="isStarred(lang)" :icon="cdxIconStar" size="x-small" class="language-item__star" />
+                      <span :lang="lang.code" :dir="getDir(lang.code)">
+                        {{ lang.autonym }}
+                      </span>
+                    </li>
                 </ul>
               </template>
             </div>
@@ -96,8 +98,11 @@
 
 <script>
 import MyLanguageSelector from "../components/MyLanguageSelector.vue";
-import { CdxSearchInput, CdxProgressBar } from "@wikimedia/codex";
+import { CdxSearchInput, CdxProgressBar, CdxIcon } from "@wikimedia/codex";
+import { cdxIconStar } from '@wikimedia/codex-icons';
 import { getDir } from "@wikimedia/language-data";
+import { getAllLanguages, assignAttributeToRandomLanguages, groupLanguagesByGroup } from "../components/demoHelpers.js";
+import { GROUP_TITLES } from "../constants/groupTitles.js";
 
 export default {
   name: "MyLanguageSelectorDemo",
@@ -105,14 +110,11 @@ export default {
     MyLanguageSelector,
     CdxSearchInput,
     CdxProgressBar,
+    CdxIcon,
   },
   props: {
     searchAPI: {
       type: String,
-      required: true,
-    },
-    languageGroups: {
-      type: Array,
       required: true,
     },
     selectedLanguage: {
@@ -125,6 +127,53 @@ export default {
     },
   },
   emits: ['update:selectedLanguage'],
+  data() {
+    return {
+      languageGroups: [],
+      cdxIconStar,
+    };
+  },
+  mounted() {
+    // Setup language groups for MyLanguageSelector - do this after mount to avoid blocking
+    try {
+      const allLanguages = getAllLanguages();
+      // Add starred attribute to some random languages
+      const languagesWithStarred = assignAttributeToRandomLanguages(
+        allLanguages,
+        'starred',
+        true,
+        0.15 // 15% chance of being starred
+      );
+      // Assign some languages to 'suggested' group
+      const languagesWithSuggested = assignAttributeToRandomLanguages(
+        languagesWithStarred,
+        'groups',
+        ['suggested'],
+        0.1 // 10% chance of being suggested
+      );
+      // Assign all remaining languages (without groups) to 'all' group
+      const languagesWithGroups = languagesWithSuggested.map(lang => {
+        if (lang.groups && lang.groups.length > 0) {
+          return lang;
+        }
+        // Assign languages without groups to 'all' group
+        return {
+          ...lang,
+          groups: ['all']
+        };
+      });
+      // Ensure GROUP_TITLES includes 'all' group
+      const groupTitles = {
+        ...GROUP_TITLES,
+        all: 'All languages'
+      };
+      this.languageGroups = groupLanguagesByGroup(languagesWithGroups, groupTitles);
+    } catch (error) {
+      console.error('Error initializing language groups:', error);
+      // Fallback to empty array if there's an error
+      this.languageGroups = [];
+    }
+  },
   computed: {
     languageGridStyle() {
       return {
@@ -138,6 +187,9 @@ export default {
     getDir,
     onLanguageSelect(lang) {
       this.$emit('update:selectedLanguage', lang);
+    },
+    isStarred(lang) {
+      return lang.starred === true;
     },
   },
 };
@@ -209,7 +261,9 @@ export default {
       row-gap: 0.25rem;
 
       li {
-        display: block;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
         text-align: left;
         padding: 4px 6px;
         border-radius: 2px;
@@ -220,6 +274,11 @@ export default {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+
+        .language-item__star {
+          flex-shrink: 0;
+          color: @color-progressive;
+        }
 
         &.language-item--selected {
           background-color: @background-color-progressive-subtle;

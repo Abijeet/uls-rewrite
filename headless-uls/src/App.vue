@@ -20,7 +20,6 @@
 
       <MyLanguageSelectorDemo
         :searchAPI="searchAPI"
-        :languageGroups="languageGroups"
         :selectedLanguage="selectedLanguage"
         :columns="selectedColumns"
         @update:selectedLanguage="onLanguageSelect"
@@ -47,8 +46,7 @@ import MyLanguageSelectorDemo from "./demos/MyLanguageSelectorDemo.vue";
 import LookupDemo from "./demos/LookupDemo.vue";
 import MultiselectLookupDemo from "./demos/MultiselectLookupDemo.vue";
 import { CdxField, CdxSelect } from "@wikimedia/codex";
-import { getAllLanguages, assignAttributeToRandomLanguages, groupLanguagesByGroup } from "./components/demoHelpers.js";
-import { GROUP_TITLES } from "./constants/groupTitles.js";
+import { getAllLanguages } from "./components/demoHelpers.js";
 
 export default {
   name: "App",
@@ -66,8 +64,6 @@ export default {
     return {
       searchAPI:
         "https://en.wikipedia.org/w/api.php?action=languagesearch&format=json&formatversion=2&origin=*",
-      // languages: ["en", "es", "fr", "hi", "or", "ta", "ml", "zh"],
-      languageGroups: [],
       selectedLanguage: null,
       allLanguagesForMultiselect: [],
       selectedColumns: 3,
@@ -80,23 +76,13 @@ export default {
     };
   },
   mounted() {
-    // Setup language groups for MyLanguageSelector - do this after mount to avoid blocking
+    // Setup languages for MultiselectLookup and Lookup (business logic will handle menu items)
     try {
       const allLanguages = getAllLanguages();
-      const languagesWithSuggested = assignAttributeToRandomLanguages(
-        allLanguages,
-        'groups',
-        ['suggested'],
-        0.1 // 10% chance of being suggested
-      );
-      this.languageGroups = groupLanguagesByGroup(languagesWithSuggested, GROUP_TITLES);
-      
-      // Setup languages for MultiselectLookup (business logic will handle menu items)
       this.allLanguagesForMultiselect = allLanguages;
     } catch (error) {
-      console.error('Error initializing language groups:', error);
+      console.error('Error initializing languages:', error);
       // Fallback to empty array if there's an error
-      this.languageGroups = [];
       this.allLanguagesForMultiselect = [];
     }
   },
