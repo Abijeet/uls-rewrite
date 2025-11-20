@@ -9,12 +9,16 @@
 
       <div class="columns-control">
         <cdx-field>
-          Number of columns:
           <cdx-select
             v-model:selected="selectedColumns"
             :menu-items="columnOptions"
             aria-label="Select number of columns"
           />
+        </cdx-field>  
+        <cdx-field>
+          <cdx-button @click="isFullscreen = true" action="progressive">
+            Fullscreen
+          </cdx-button>
         </cdx-field>
       </div>
 
@@ -23,6 +27,15 @@
         :selectedLanguage="selectedLanguage"
         :columns="selectedColumns"
         @update:selectedLanguage="onLanguageSelect"
+      />
+
+      <FullscreenLanguageSelectorDemo
+        :searchAPI="searchAPI"
+        :selectedLanguage="selectedLanguage"
+        :is-fullscreen="isFullscreen"
+        :columns="selectedColumns"
+        @update:selectedLanguage="onLanguageSelect"
+        @update:is-fullscreen="isFullscreen = $event"
       />
 
       <LookupDemo
@@ -43,9 +56,10 @@ import LanguageSelector from "./components/LanguageSelector.vue";
 import MyLanguageSelector from "./components/MyLanguageSelector.vue";
 import LanguageSelectorDemo from "./demos/LanguageSelectorDemo.vue";
 import MyLanguageSelectorDemo from "./demos/MyLanguageSelectorDemo.vue";
+import FullscreenLanguageSelectorDemo from "./demos/FullscreenLanguageSelectorDemo.vue";
 import LookupDemo from "./demos/LookupDemo.vue";
 import MultiselectLookupDemo from "./demos/MultiselectLookupDemo.vue";
-import { CdxField, CdxSelect } from "@wikimedia/codex";
+import { CdxField, CdxSelect, CdxButton } from "@wikimedia/codex";
 import { getAllLanguages } from "./components/demoHelpers.js";
 
 export default {
@@ -55,10 +69,12 @@ export default {
     MyLanguageSelector,
     LanguageSelectorDemo,
     MyLanguageSelectorDemo,
+    FullscreenLanguageSelectorDemo,
     LookupDemo,
     MultiselectLookupDemo,
     CdxField,
     CdxSelect,
+    CdxButton,
   },
   data() {
     return {
@@ -73,6 +89,7 @@ export default {
         { label: "3 columns", value: 3 },
         { label: "4 columns", value: 4 },
       ],
+      isFullscreen: false,
     };
   },
   mounted() {
@@ -113,6 +130,13 @@ export default {
 .demo-container {
   max-width: 1200px;
   margin: 0 auto;
+}
+
+.columns-control {
+  display: flex;
+  gap: @spacing-200;
+  margin-bottom: @spacing-200;
+  align-items: flex-end;
 }
 
 </style>
