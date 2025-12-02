@@ -3,10 +3,6 @@
     <div class="demo-container">
       <h1>Language Selector Demos</h1>
       
-      <LanguageSelectorDemo
-        :searchAPI="searchAPI"
-      />
-
       <div class="columns-control">
         <cdx-field>
           <cdx-select
@@ -19,10 +15,11 @@
           <cdx-button @click="isFullscreen = true" action="progressive">
             Fullscreen
           </cdx-button>
+          <a target="_blank" href="https://github.com/Abijeet/uls-rewrite/blob/main/headless-uls/src/demos/FullscreenLanguageSelectorDemo.vue"><cdx-icon :icon="cdxIconLinkExternal" :size="x-small" ></cdx-icon></a>
         </cdx-field>
       </div>
 
-      <MyLanguageSelectorDemo
+      <LanguageSelectorDemo
         :searchAPI="searchAPI"
         :selectedLanguage="selectedLanguage"
         :columns="selectedColumns"
@@ -53,28 +50,26 @@
 
 <script>
 import LanguageSelector from "./components/LanguageSelector.vue";
-import MyLanguageSelector from "./components/MyLanguageSelector.vue";
 import LanguageSelectorDemo from "./demos/LanguageSelectorDemo.vue";
-import MyLanguageSelectorDemo from "./demos/MyLanguageSelectorDemo.vue";
 import FullscreenLanguageSelectorDemo from "./demos/FullscreenLanguageSelectorDemo.vue";
 import LookupDemo from "./demos/LookupDemo.vue";
 import MultiselectLookupDemo from "./demos/MultiselectLookupDemo.vue";
-import { CdxField, CdxSelect, CdxButton } from "@wikimedia/codex";
+import { CdxField, CdxSelect, CdxButton, CdxIcon } from "@wikimedia/codex";
+import { cdxIconLinkExternal } from '@wikimedia/codex-icons';
 import { getAllLanguages } from "./components/demoHelpers.js";
 
 export default {
   name: "App",
   components: {
     LanguageSelector,
-    MyLanguageSelector,
     LanguageSelectorDemo,
-    MyLanguageSelectorDemo,
     FullscreenLanguageSelectorDemo,
     LookupDemo,
     MultiselectLookupDemo,
     CdxField,
     CdxSelect,
     CdxButton,
+    CdxIcon,
   },
   data() {
     return {
@@ -90,6 +85,7 @@ export default {
         { label: "4 columns", value: 4 },
       ],
       isFullscreen: false,
+      cdxIconLinkExternal,
     };
   },
   mounted() {

@@ -15,7 +15,7 @@
           </cdx-button>
         </div>
         <div class="fullscreen-body">
-          <my-language-selector-demo
+          <language-selector-demo
             :searchAPI="searchAPI"
             :selectedLanguage="selectedLanguage"
             :columns="columns"
@@ -28,14 +28,14 @@
 </template>
 
 <script>
-import MyLanguageSelectorDemo from "./MyLanguageSelectorDemo.vue";
+import LanguageSelectorDemo from "./LanguageSelectorDemo.vue";
 import { CdxButton, CdxIcon } from "@wikimedia/codex";
 import { cdxIconClose } from '@wikimedia/codex-icons';
 
 export default {
   name: "FullscreenLanguageSelectorDemo",
   components: {
-    MyLanguageSelectorDemo,
+    LanguageSelectorDemo,
     CdxButton,
     CdxIcon,
   },
@@ -140,14 +140,14 @@ export default {
       display: none;
     }
 
-    .my-language-selector {
+    .language-selector {
       flex: 1;
       min-height: 0;
       display: flex;
       flex-direction: column;
 
-      .my-language-selector-wrapper-root {
-        .my-language-selector__languages {
+      .language-selector-wrapper-root {
+        .language-selector__languages {
           max-height: 100vh;
         }
       }

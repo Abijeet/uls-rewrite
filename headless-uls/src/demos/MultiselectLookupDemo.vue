@@ -1,11 +1,11 @@
 <template>
   <div class="demo-section">
-    <h2>MultiselectLookup Language Selector</h2>
+    <h2>MultiselectLookup Language Selector <a target="_blank" href="https://github.com/Abijeet/uls-rewrite/blob/main/headless-uls/src/demos/MultiselectLookupDemo.vue"><cdx-icon :icon="cdxIconLinkExternal" :size="x-small" ></cdx-icon></a></h2>
     <p v-if="selectedLanguages.length > 0">
       Selected: <strong>{{ selectedLanguages.map(code => getAutonym(code)).join(', ') }}</strong>
     </p>
     <p v-else>No languages selected</p>
-    <my-language-selector
+    <language-selector
       :languages="allLanguages"
       :searchAPI="searchAPI"
       v-slot="{
@@ -30,20 +30,22 @@
           No languages found.
         </template>
       </cdx-multiselect-lookup>
-    </my-language-selector>
+    </language-selector>
   </div>
 </template>
 
 <script>
-import MyLanguageSelector from "../components/MyLanguageSelector.vue";
-import { CdxMultiselectLookup } from "@wikimedia/codex";
+import LanguageSelector from "../components/LanguageSelector.vue";
+import { CdxMultiselectLookup, CdxIcon } from "@wikimedia/codex";
+import { cdxIconLinkExternal } from '@wikimedia/codex-icons';
 import { getAutonym } from "@wikimedia/language-data";
 
 export default {
   name: "MultiselectLookupDemo",
   components: {
-    MyLanguageSelector,
+    LanguageSelector,
     CdxMultiselectLookup,
+    CdxIcon,
   },
   props: {
     searchAPI: {
@@ -64,6 +66,7 @@ export default {
         visibleItemLimit: 10,
         boldLabel: true,
       },
+      cdxIconLinkExternal,
     };
   },
   methods: {

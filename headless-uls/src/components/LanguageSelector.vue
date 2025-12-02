@@ -1,176 +1,180 @@
 <script>
-import languagedata from "@wikimedia/language-data";
+import { flattenLanguageGroups } from './demoHelpers.js';
+
 export default {
-  name: "LanguageSelector",
+  name: 'LanguageSelector',
 
   props: {
     /**
-     * Array of language codes. This is the available set of
-     * languages that this selector is aware of.
-     * If not passed, all languages known to langaugedata library
-     * will be used.
+     * `languages` can be either:
+     *  - Array<{ code, autonym, tooltip? }>
+     *  - Array<{ code, title, languages: Array<{ code, autonym, tooltip? }> }>
      */
-    selectableLanguages: {
-      type: Array,
-      default: () => null,
-    },
-
-    /**
-     * Search API URL for language search.
-     */
+    languages: { type: Array, required: true },
+    selected: { type: Object, default: null },
     searchAPI: {
-      type: String,
-      default: () => null,
+    type: String,
+    default: () => null,
     },
   },
 
-  data: () => ({
-    searchQuery: "",
-    searchResults: [],
-    selected: null,
-    isOpen: false,
-  }),
+  emits: [ 'update:selected', 'close' ],
+
+  data() {
+    return {
+      searchValue: '',
+      languageFilter: null,
+      isSearching: false,
+      searchDebounceTimer: null,
+    };
+  },
 
   computed: {
-    allLanguages: () => Object.keys(languagedata.getLanguages()),
-    languages: (vm) => vm.selectableLanguages || vm.allLanguages,
-    availableLanguages: () => languagedata.getLanguages(),
-    searchResultsByScript: (vm) => {
-      let chunkSize;
-      const languagesByScript = [
-        ...vm.searchResults.sort(languagedata.sortByAutonym),
-      ];
-      const resultsCount = vm.searchResults.length;
-      if (resultsCount < 10) chunkSize = resultsCount;
-      if (resultsCount < 30) chunkSize = 10;
-      if (resultsCount >= 30) chunkSize = 15;
-      const chunks = [];
-
-      while (languagesByScript.length) {
-        chunks.push(languagesByScript.splice(0, chunkSize));
-      }
-
-      return chunks;
-    },
-    resultsDisplayClass: (vm) => {
-      const resultsCount = vm.searchResults.length;
-      if (resultsCount < 10) return "few-results";
-      if (resultsCount < 30) return "some-results";
-      if (resultsCount >= 30) return "many-results";
-    },
-  },
-
-  watch: {
-    /**
-     * @param {string} query
-     */
-    searchQuery: async function (query) {
-      this.searchResults = await this.search(query);
-    },
-  },
-
-  mounted: async function () {
-    // Initialize with an empty search
-    this.searchResults = await this.search();
-  },
-
-  methods: {
-    toggle() {
-      this.isOpen = !this.isOpen;
+    isGrouped() {
+      return !!(this.languages.length > 0 && this.languages[0].languages);
     },
 
-    close() {
-      this.isOpen = false;
-    },
-
-    selectLanguage: function (language) {
-      this.selected = language;
-      this.close();
-    },
-    /**
-     * @param {string} [query]
-     * @return {Promise<string[]>}
-     */
-    search: async function (query) {
-      if (!query || query.trim().length === 0) {
+    filteredLanguages() {
+      if (!this.languageFilter) {
         return this.languages;
       }
 
-      if (this.searchAPI) {
-        const searchApiResults = await this.searchWithAPI(this.searchQuery);
-        // Remove the languages not known to this selector.
-        return searchApiResults.filter((code) => this.languages.includes(code));
+      const filterFn = (lang) => lang.code in this.languageFilter;
+
+      let languages = this.languages;
+      if (this.isGrouped) {
+        languages = flattenLanguageGroups(this.languages);
       }
 
-      // If no search API is provided, do a client side search
-      const exactMatch = this.languages.filter(
-        (code) => query.toLowerCase() === code.toLowerCase()
-      );
-
-      if (exactMatch.length) {
-        return exactMatch;
-      }
-
-      const filterResults = this.languages.filter(
-        (code) =>
-          // Search using autonym
-          languagedata
-            .getAutonym(code)
-            .toLowerCase()
-            .includes(query.toLowerCase()) ||
-          // Search using script name
-          languagedata
-            .getScript(code)
-            .toLowerCase()
-            .includes(query.toLowerCase())
-      );
-
-      if (filterResults.length) {
-        return filterResults;
-      }
-
-      return [];
+      return languages.filter(filterFn);
     },
 
-    /**
-     * @param {string} query
-     * @return {Promise<string[]>}
-     */
-    searchWithAPI: function (query) {
-      const apiURL = new URL(this.searchAPI);
-      apiURL.searchParams.append("search", query);
-      apiURL.searchParams.append("origin", "*");
-      return fetch(apiURL.toString())
-        .then((response) => response.json())
-        .then((result) => Object.keys(result.languagesearch || {}));
+
+    // Menu items for MultiselectLookup format
+    menuItems() {
+      let languages = this.languages;
+      if (this.isGrouped) {
+        languages = flattenLanguageGroups(this.languages);
+      }
+
+      // If there's a language filter from search, apply it
+      // If no search value, show all languages
+      if (this.searchValue && this.languageFilter) {
+        languages = languages.filter(lang => lang.code in this.languageFilter);
+      }
+
+      return languages.map(lang => ({
+        label: lang.autonym,
+        value: lang.code,
+        description: lang.code,
+      }));
+    },
+
+    // All languages as menu items (for initial display)
+    allMenuItems() {
+      let languages = this.languages;
+      if (this.isGrouped) {
+        languages = flattenLanguageGroups(this.languages);
+      }
+      return languages.map(lang => ({
+        label: lang.autonym,
+        value: lang.code,
+        description: lang.code,
+      }));
     },
   },
+
+  methods: {
+    compareCodes(code) {
+      if (!this.selected) {
+        return false;
+      }
+      return this.selected.code === code;
+    },
+
+    onLanguageItemClick(lang) {
+      this.$emit('update:selected', lang);
+    },
+
+    onCloseButtonClicked() {
+      this.$emit('close');
+    },
+
+    // Core search method
+    async performSearch(query) {
+      if (!query || query.trim() === '') {
+        this.languageFilter = null;
+        this.searchValue = '';
+        this.isSearching = false;
+        return;
+      }
+
+      this.searchValue = query;
+
+      // Use provided searchAPI
+      if (!this.searchAPI) {
+        this.languageFilter = null;
+        return;
+      }
+
+      this.isSearching = true;
+      const endpoint = this.searchAPI;
+      const url = `${endpoint}&${new URLSearchParams({ search: query })}`;
+
+      try {
+        const response = await fetch(url, { headers: { Accept: 'application/json' } });
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+        const data = await response.json();
+        this.languageFilter = data.languagesearch || {};
+      } catch (error) {
+        console.error('Error searching languages:', error);
+        this.languageFilter = null;
+      } finally {
+        this.isSearching = false;
+      }
+    },
+
+    onSearchUpdate(query) {
+      // Clear previous debounce timer
+      if (this.searchDebounceTimer) {
+        clearTimeout(this.searchDebounceTimer);
+      }
+
+      // If query is empty, reset the search
+      if (!query || query.trim() === '') {
+        this.performSearch('');
+        return;
+      }
+
+      // Debounce the search API call
+      const currentQuery = query;
+      this.searchDebounceTimer = setTimeout(() => {
+        this.performSearch(currentQuery);
+      }, 300);
+    },
+  },
+
   render() {
     return this.$slots.default({
-      languages: this.languages,
-      searchResults: this.searchResults,
-      searchResultsByScript: this.searchResultsByScript,
-      resultsDisplayClass: this.resultsDisplayClass,
+      // Data
+      filteredLanguages: this.filteredLanguages,
+      isGrouped: this.isGrouped,
+      searchValue: this.searchValue,
+      loading: this.isSearching,
       selected: this.selected,
-      selectLanguage: this.selectLanguage,
-      isOpen: this.isOpen,
-      toggle: this.toggle,
-      close: this.close,
-      inputAttrs: {
-        value: this.searchQuery,
-      },
-      inputEvents: {
-        input: (e) => {
-          this.searchQuery = e.target.value;
-        },
-        keydown: (e) => {
-          if (e.keyCode === 13) {
-            e.preventDefault();
-            // handle enter
-          }
-        },
-      },
+      // Multiselect data
+      menuItems: this.menuItems,
+      allMenuItems: this.allMenuItems,
+
+      // Methods
+      compareCodes: this.compareCodes,
+      onLanguageItemClick: this.onLanguageItemClick,
+      onCloseButtonClicked: this.onCloseButtonClicked,
+      onSearchUpdate: this.onSearchUpdate,
     });
   },
 };
 </script>
+
