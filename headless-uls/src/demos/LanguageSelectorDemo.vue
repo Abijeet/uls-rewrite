@@ -1,6 +1,6 @@
 <template>
   <div class="demo-section">
-    <h2>LanguageSelector <a target="_blank" href="https://github.com/Abijeet/uls-rewrite/blob/main/headless-uls/src/demos/FullscreenLanguageSelectorDemo.vue"><cdx-icon :icon="cdxIconLinkExternal" :size="x-small" ></cdx-icon></a></h2>
+    <h2>LanguageSelector <a target="_blank" href="https://github.com/Abijeet/uls-rewrite/blob/main/headless-uls/src/demos/LanguageSelectorDemo.vue"><cdx-icon :icon="cdxIconLinkExternal" :size="x-small" ></cdx-icon></a></h2>
     <p v-if="selectedLanguage">
       Selected: <strong>{{ selectedLanguage.autonym }}</strong> ({{ selectedLanguage.code }})
     </p>
