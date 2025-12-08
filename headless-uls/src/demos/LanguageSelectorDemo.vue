@@ -28,11 +28,8 @@
                 isGrouped,
                 searchValue,
                 loading: isLoading,
-                selected: selectedLang,
-                isFullscreen,
                 compareCodes,
                 onLanguageItemClick,
-                onCloseButtonClicked,
                 onSearchUpdate,
               }"
             >
