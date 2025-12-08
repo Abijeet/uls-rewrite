@@ -2,42 +2,17 @@
   <div id="app">
     <div class="demo-container">
       <h1>Language Selector Demos</h1>
+
       <p>
         The page demonstrates various Language selector component built using the headless 
         <a href="https://github.com/Abijeet/uls-rewrite/blob/main/headless-uls/src/components/LanguageSelector.vue">LanguageSelector</a> 
         component. The headless component encapsulates the core logic and can be integrated with different UI components.
       </p>
-      
-      <div class="columns-control">
-        <cdx-field>
-          <cdx-select
-            v-model:selected="selectedColumns"
-            :menu-items="columnOptions"
-            aria-label="Select number of columns"
-          />
-        </cdx-field>  
-        <cdx-field>
-          <cdx-button @click="isFullscreen = true" action="progressive">
-            Fullscreen
-          </cdx-button>
-          <a target="_blank" href="https://github.com/Abijeet/uls-rewrite/blob/main/headless-uls/src/demos/FullscreenLanguageSelectorDemo.vue"><cdx-icon :icon="cdxIconLinkExternal" :size="x-small" ></cdx-icon></a>
-        </cdx-field>
-      </div>
 
       <LanguageSelectorDemo
         :searchAPI="searchAPI"
         :selectedLanguage="selectedLanguage"
-        :columns="selectedColumns"
         @update:selectedLanguage="onLanguageSelect"
-      />
-
-      <FullscreenLanguageSelectorDemo
-        :searchAPI="searchAPI"
-        :selectedLanguage="selectedLanguage"
-        :is-fullscreen="isFullscreen"
-        :columns="selectedColumns"
-        @update:selectedLanguage="onLanguageSelect"
-        @update:is-fullscreen="isFullscreen = $event"
       />
 
       <LookupDemo
@@ -56,10 +31,9 @@
 <script>
 import LanguageSelector from "./components/LanguageSelector.vue";
 import LanguageSelectorDemo from "./demos/LanguageSelectorDemo.vue";
-import FullscreenLanguageSelectorDemo from "./demos/FullscreenLanguageSelectorDemo.vue";
 import LookupDemo from "./demos/LookupDemo.vue";
 import MultiselectLookupDemo from "./demos/MultiselectLookupDemo.vue";
-import { CdxField, CdxSelect, CdxButton, CdxIcon } from "@wikimedia/codex";
+import { CdxIcon } from "@wikimedia/codex";
 import { cdxIconLinkExternal } from '@wikimedia/codex-icons';
 import { getAllLanguages } from "./components/demoHelpers.js";
 
@@ -68,12 +42,8 @@ export default {
   components: {
     LanguageSelector,
     LanguageSelectorDemo,
-    FullscreenLanguageSelectorDemo,
     LookupDemo,
     MultiselectLookupDemo,
-    CdxField,
-    CdxSelect,
-    CdxButton,
     CdxIcon,
   },
   data() {
@@ -82,14 +52,6 @@ export default {
         "https://en.wikipedia.org/w/api.php?action=languagesearch&format=json&formatversion=2&origin=*",
       selectedLanguage: null,
       allLanguagesForMultiselect: [],
-      selectedColumns: 3,
-      columnOptions: [
-        { label: "1 column", value: 1 },
-        { label: "2 columns", value: 2 },
-        { label: "3 columns", value: 3 },
-        { label: "4 columns", value: 4 },
-      ],
-      isFullscreen: false,
       cdxIconLinkExternal,
     };
   },
@@ -131,13 +93,6 @@ export default {
 .demo-container {
   max-width: 1200px;
   margin: 0 auto;
-}
-
-.columns-control {
-  display: flex;
-  gap: @spacing-200;
-  margin-bottom: @spacing-200;
-  align-items: flex-end;
 }
 
 </style>
