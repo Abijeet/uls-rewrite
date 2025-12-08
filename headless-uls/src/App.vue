@@ -2,6 +2,11 @@
   <div id="app">
     <div class="demo-container">
       <h1>Language Selector Demos</h1>
+      <p>
+        The page demonstrates various Language selector component built using the headless 
+        <a href="https://github.com/Abijeet/uls-rewrite/blob/main/headless-uls/src/components/LanguageSelector.vue">LanguageSelector</a> 
+        component. The headless component encapsulates the core logic and can be integrated with different UI components.
+      </p>
       
       <div class="columns-control">
         <cdx-field>

@@ -10,7 +10,6 @@
       :searchAPI="searchAPI"
       v-slot="{
         menuItems,
-        allMenuItems,
         onSearchUpdate,
       }"
     >
