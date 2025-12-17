@@ -19,10 +19,10 @@
         :allLanguages="allLanguagesForMultiselect"
       />
 
-      <!-- <MultiselectLookupDemo
+      <MultiselectLookupDemo
         :searchAPI="searchAPI"
         :allLanguages="allLanguagesForMultiselect"
-      /> -->
+      />
     </div>
   </div>
 </template>
@@ -30,7 +30,7 @@
 <script>
 // import LanguageSelectorDemo from "./demos/LanguageSelectorDemo.vue";
 import LookupDemo from "./demos/LookupDemo.vue";
-// import MultiselectLookupDemo from "./demos/MultiselectLookupDemo.vue";
+import MultiselectLookupDemo from "./demos/MultiselectLookupDemo.vue";
 import { CdxIcon } from "@wikimedia/codex";
 import { cdxIconLinkExternal } from '@wikimedia/codex-icons';
 import { getAllLanguages } from "./utils/demoHelpers.js";
@@ -40,7 +40,7 @@ export default {
   components: {
     // LanguageSelectorDemo,
     LookupDemo,
-    // MultiselectLookupDemo,
+    MultiselectLookupDemo,
     CdxIcon,
   },
   data() {
