@@ -38,6 +38,10 @@ jobs:
         working-directory: ./headless-uls
         run: npm ci
 
+      - name: Install dependencies for composable-uls
+        working-directory: ./composable-uls
+        run: npm ci
+
       - name: Build codex-uls
         working-directory: ./codex-uls
         run: npm run build
@@ -46,17 +50,23 @@ jobs:
         working-directory: ./headless-uls
         run: npm run build
 
+      - name: Build composable-uls
+        working-directory: ./composable-uls
+        run: npm run build
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
       - name: Prepare deployment
         run: |
-          # custom the directories path for both demo pages
+          # custom the directories path for all demo pages
           # /codex-uls/
           # /headless-uls/
+          # /composable-uls/
           # /assets/
           mkdir -p deploy/codex-uls
           mkdir -p deploy/headless-uls
+          mkdir -p deploy/composable-uls
           mkdir -p deploy/assets
           
           # Copy codex-uls index.html
@@ -65,12 +75,18 @@ jobs:
           # Copy headless-uls index.html
           cp headless-uls/dist/index.html deploy/headless-uls/
           
-          # Merge assets from both builds into shared assets folder
+          # Copy composable-uls index.html
+          cp composable-uls/dist/index.html deploy/composable-uls/
+          
+          # Merge assets from all builds into shared assets folder
           if [ -d "codex-uls/dist/assets" ]; then
             cp -r codex-uls/dist/assets/* deploy/assets/ 2>/dev/null || true
           fi
           if [ -d "headless-uls/dist/assets" ]; then
             cp -r headless-uls/dist/assets/* deploy/assets/ 2>/dev/null || true
+          fi
+          if [ -d "composable-uls/dist/assets" ]; then
+            cp -r composable-uls/dist/assets/* deploy/assets/ 2>/dev/null || true
           fi
 
       - name: Upload artifact
